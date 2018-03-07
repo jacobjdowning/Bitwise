@@ -1,6 +1,6 @@
 package com.downingjj.bitwise.blocks;
 
-import com.downingjj.bitwise.Util.INamed;
+import com.downingjj.bitwise.util.INamed;
 import com.downingjj.bitwise.Reference;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;

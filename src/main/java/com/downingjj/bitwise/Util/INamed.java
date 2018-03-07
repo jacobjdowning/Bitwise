@@ -1,4 +1,4 @@
-package com.downingjj.bitwise.Util;
+package com.downingjj.bitwise.util;
 
 /**
  * Created by Jacob on 07/03/2018.
