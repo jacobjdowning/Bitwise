@@ -1,6 +1,6 @@
-package com.jacobjdowning.bitwise;
+package com.downingjj.bitwise;
 
-import com.jacobjdowning.bitwise.proxy.IProxy;
+import com.downingjj.bitwise.proxy.IProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -22,6 +22,7 @@ public class Bitwise {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){
+        proxy.preInit(event);
         logger = event.getModLog();
     }
 

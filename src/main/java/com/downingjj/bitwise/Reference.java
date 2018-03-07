@@ -1,4 +1,4 @@
-package com.jacobjdowning.bitwise;
+package com.downingjj.bitwise;
 
 /**
  * Created by Jacob on 07/03/2018.

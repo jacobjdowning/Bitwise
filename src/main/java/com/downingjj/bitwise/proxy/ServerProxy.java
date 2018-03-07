@@ -1,4 +1,4 @@
-package com.jacobjdowning.bitwise.proxy;
+package com.downingjj.bitwise.proxy;
 
 /**
  * Created by Jacob on 07/03/2018.
