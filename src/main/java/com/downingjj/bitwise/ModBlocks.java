@@ -1,5 +1,6 @@
 package com.downingjj.bitwise;
 
+import com.downingjj.bitwise.blocks.RedstoneConstant;
 import com.downingjj.bitwise.blocks.WiseBlock;
 
 import java.util.Collection;
@@ -15,7 +16,7 @@ public class ModBlocks {
         blocks = new HashMap<String, WiseBlock>();
 
         //All mod blocks
-
+        add(new RedstoneConstant());
     }
 
     public static WiseBlock get(String name){
