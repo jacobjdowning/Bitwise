@@ -1,0 +1,6 @@
+{
+  "parent":"bitwise:block/redstonetorchnub",
+  "textures": {
+    "torch": "blocks/redstone_torch_off"
+  }
+}

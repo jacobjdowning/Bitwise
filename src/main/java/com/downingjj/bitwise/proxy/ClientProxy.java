@@ -1,8 +1,10 @@
 package com.downingjj.bitwise.proxy;
 
 import com.downingjj.bitwise.ModBlocks;
+import com.downingjj.bitwise.Reference;
 import com.downingjj.bitwise.blocks.WiseBlock;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -17,5 +19,7 @@ public class ClientProxy extends CommonProxy {
         for (WiseBlock b : ModBlocks.getAll()){
             b.initModel();
         }
+
+        OBJLoader.INSTANCE.addDomain(Reference.MOD_ID);
     }
 }

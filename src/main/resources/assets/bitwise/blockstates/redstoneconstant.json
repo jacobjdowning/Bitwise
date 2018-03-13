@@ -6,6 +6,11 @@
   "variants": {
     "normal": [{}],
     "inventory": [{}],
+    "nubs":{
+      "block" : {"model" : "bitwise:redstoneconstant"},
+      "on" : {"model" : "bitwise:redstonetorchnubon"},
+      "off" : {"model" : "bitwise:redstonetorchnuboff"}
+    },
     "facing": {
       "north": {},
       "south": {"y": 180},
