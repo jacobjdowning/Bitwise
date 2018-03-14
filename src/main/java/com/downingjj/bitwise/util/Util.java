@@ -1,6 +1,7 @@
 package com.downingjj.bitwise.util;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
@@ -14,5 +15,9 @@ public class Util {
         }else{
             return clazz.cast(world.getTileEntity(pos));
         }
+    }
+
+    public static EnumFacing getFacingFromPositions(BlockPos from, BlockPos to){
+        return EnumFacing.getFacingFromVector(to.getX() - from.getX(), to.getY() - from.getY(), to.getZ() - from.getZ());
     }
 }
