@@ -1,5 +1,6 @@
 package com.downingjj.bitwise;
 
+import com.downingjj.bitwise.blocks.BitwiseGate;
 import com.downingjj.bitwise.blocks.RedstoneConstant;
 import com.downingjj.bitwise.blocks.WiseBlock;
 
@@ -17,6 +18,7 @@ public class ModBlocks {
 
         //All mod blocks
         add(new RedstoneConstant());
+        add(new BitwiseGate());
     }
 
     public static WiseBlock get(String name){
