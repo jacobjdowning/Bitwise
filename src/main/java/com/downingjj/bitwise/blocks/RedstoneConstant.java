@@ -86,13 +86,36 @@ public class RedstoneConstant extends HorizontalWise implements ITileEntityProvi
         if(player.isSneaking()) {
             Util.getTEfromPos(world, pos, RedstoneConstantTile.class).cycle();
         }else if(side.compareTo(EnumFacing.UP)==0){
-            Util.getTEfromPos(world, pos, RedstoneConstantTile.class).hitDigit((int) Math.pow(2,Math.floor((1-hitX) * 4)));
+            EnumFacing blockDirection = state.getValue(FACING);
+            Util.getTEfromPos(world, pos, RedstoneConstantTile.class).hitDigit(getDigitfromHit(hitX, hitZ, blockDirection));
         }else{
             return false;
         }
 
         world.notifyNeighborsOfStateChange(pos, this, false);
         return true;
+    }
+
+    private int getDigitfromHit(float hitX, float hitZ, EnumFacing facing){
+        float hit;
+        switch(facing){
+            case NORTH:
+                hit = hitX;
+                break;
+            case EAST:
+                hit = hitZ;
+                break;
+            case SOUTH:
+                hit = 1 - hitX;
+                break;
+            case WEST:
+                hit = 1 - hitZ;
+                break;
+            default:
+                hit = hitX;
+                break;
+        }
+        return (int) Math.pow(2,Math.floor((hit) * 4));
     }
 
     @Override
