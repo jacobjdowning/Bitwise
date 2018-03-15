@@ -1,13 +1,16 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "bitwise:redstoneconstant"
+    "model": "bitwise:redstonecircuit",
+    "textures" : {
+      "top": "minecraft:blocks/comparator_off"
+    }
   },
   "variants": {
     "normal": [{}],
     "inventory": [{}],
     "nubs":{
-      "block" : {"model" : "bitwise:redstoneconstant"},
+      "block" : {"model" : "bitwise:redstonecircuit"},
       "on" : {"model" : "bitwise:redstonetorchnubon"},
       "off" : {"model" : "bitwise:redstonetorchnuboff"}
     },

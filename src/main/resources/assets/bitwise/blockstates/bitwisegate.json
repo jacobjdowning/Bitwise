@@ -1,7 +1,10 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "bitwise:redstoneconstant"
+    "model": "bitwise:redstonecircuit",
+    "textures" : {
+      "top": "minecraft:blocks/comparator_off"
+    }
   },
   "variants": {
     "normal": [{}],

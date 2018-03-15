@@ -1,6 +1,5 @@
 {
   "textures": {
-    "top": "minecraft:blocks/comparator_off",
     "side" : "blocks/stone_slab_top"
   },
   "elements": [
