@@ -9,6 +9,23 @@
   "variants": {
     "normal": [{}],
     "inventory": [{}],
+    "op":{
+      "and":{
+        "textures": {
+          "top": "minecraft:blocks/comparator_off"
+        }
+      },
+      "or":{
+        "textures": {
+          "top": "minecraft:blocks/comparator_on"
+        }
+      },
+      "xor":{
+        "textures": {
+          "top": "minecraft:blocks/repeater_off"
+        }
+      }
+    },
     "facing": {
       "north": {},
       "south": {"y": 180},
