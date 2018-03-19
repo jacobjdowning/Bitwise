@@ -12,17 +12,17 @@
     "op":{
       "and":{
         "textures": {
-          "top": "minecraft:blocks/comparator_off"
+          "top": "bitwise:blocks/and_top"
         }
       },
       "or":{
         "textures": {
-          "top": "minecraft:blocks/comparator_on"
+          "top": "bitwise:blocks/or_top"
         }
       },
       "xor":{
         "textures": {
-          "top": "minecraft:blocks/repeater_off"
+          "top": "bitwise:blocks/xor_top"
         }
       }
     },

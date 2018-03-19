@@ -1,6 +1,7 @@
 {
   "textures": {
-    "side" : "blocks/stone_slab_top"
+    "side" : "blocks/stone_slab_top",
+    "particle": "blocks/stone_slab_top"
   },
   "elements": [
     {   "from": [ 0, 0, 0 ],

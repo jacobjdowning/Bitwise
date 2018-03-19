@@ -3,7 +3,7 @@
   "defaults": {
     "model": "bitwise:redstonecircuit",
     "textures" : {
-      "top": "minecraft:blocks/comparator_off"
+      "top": "bitwise:blocks/redstone_constant_top"
     }
   },
   "variants": {
