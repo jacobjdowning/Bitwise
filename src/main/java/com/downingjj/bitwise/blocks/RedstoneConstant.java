@@ -3,6 +3,7 @@ package com.downingjj.bitwise.blocks;
         import com.downingjj.bitwise.render.RedstoneConstantTESR;
         import com.downingjj.bitwise.tileentity.RedstoneConstantTile;
         import com.downingjj.bitwise.util.Util;
+        import net.minecraft.block.Block;
         import net.minecraft.block.ITileEntityProvider;
         import net.minecraft.block.material.Material;
         import net.minecraft.block.properties.IProperty;
@@ -140,6 +141,24 @@ public class RedstoneConstant extends HorizontalWise implements ITileEntityProvi
     public boolean isOpaqueCube(IBlockState state)
     {
         return false;
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    {
+        return worldIn.getBlockState(pos.down()).isTopSolid() ? super.canPlaceBlockAt(worldIn, pos) : false;
+    }
+
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
+        if(!worldIn.getBlockState(pos.down()).isTopSolid()){
+            this.dropBlockAsItem(worldIn, pos, state, 0);
+            worldIn.setBlockToAir(pos);
+
+            for (EnumFacing enumfacing : EnumFacing.values())
+            {
+                worldIn.notifyNeighborsOfStateChange(pos.offset(enumfacing), this, false);
+            }
+        }
     }
 
     @Override

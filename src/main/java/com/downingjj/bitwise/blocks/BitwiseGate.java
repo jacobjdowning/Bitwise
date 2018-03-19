@@ -139,31 +139,41 @@ public class BitwiseGate extends HorizontalWise {
     }
 
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
-        EnumFacing blockFacing = (EnumFacing)state.getValue(FACING);
-        EnumFacing[] inputFaces = new EnumFacing[2];
-        EnumFacing changedFace = Util.getFacingFromPositions(pos, fromPos);
+        if(this.canBlockStay(worldIn, pos)){
+            EnumFacing blockFacing = (EnumFacing) state.getValue(FACING);
+            EnumFacing[] inputFaces = new EnumFacing[2];
+            EnumFacing changedFace = Util.getFacingFromPositions(pos, fromPos);
 
-        inputFaces[0] = blockFacing.rotateY();
-        inputFaces[1] = inputFaces[0].getOpposite();
+            inputFaces[0] = blockFacing.rotateY();
+            inputFaces[1] = inputFaces[0].getOpposite();
 
-        if(changedFace.compareTo(inputFaces[0]) == 0 || changedFace.compareTo(inputFaces[1]) == 0){
+            if (changedFace.compareTo(inputFaces[0]) == 0 || changedFace.compareTo(inputFaces[1]) == 0) {
 
-            for(int i = 0; i < 2; i++){
-                BlockPos blockpos = pos.offset(inputFaces[i]);
-                int power = worldIn.getRedstonePower(blockpos, inputFaces[i]);
+                for (int i = 0; i < 2; i++) {
+                    BlockPos blockpos = pos.offset(inputFaces[i]);
+                    int power = worldIn.getRedstonePower(blockpos, inputFaces[i]);
 
-                if(power >= 15){
-                    inputs[i] = 15;
-                }else{
-                    IBlockState iblockstate = worldIn.getBlockState(blockpos);
-                    inputs[i] = Math.max(power, iblockstate.getBlock() == Blocks.REDSTONE_WIRE ? (iblockstate.getValue(BlockRedstoneWire.POWER)).intValue() : 0);
+                    if (power >= 15) {
+                        inputs[i] = 15;
+                    } else {
+                        IBlockState iblockstate = worldIn.getBlockState(blockpos);
+                        inputs[i] = Math.max(power, iblockstate.getBlock() == Blocks.REDSTONE_WIRE ? (iblockstate.getValue(BlockRedstoneWire.POWER)).intValue() : 0);
+                    }
+                }
+
+                int newPow = performOperation(inputs[0], inputs[1], state);
+                if (newPow != power) {
+                    power = newPow;
+                    worldIn.notifyNeighborsOfStateChange(pos, this, false);
                 }
             }
+        }else{
+            this.dropBlockAsItem(worldIn, pos, state, 0);
+            worldIn.setBlockToAir(pos);
 
-            int newPow = performOperation(inputs[0], inputs[1], state);
-            if(newPow != power){
-                power = newPow;
-                worldIn.notifyNeighborsOfStateChange(pos, this, false);
+            for (EnumFacing enumfacing : EnumFacing.values())
+            {
+                worldIn.notifyNeighborsOfStateChange(pos.offset(enumfacing), this, false);
             }
         }
     }
@@ -179,6 +189,11 @@ public class BitwiseGate extends HorizontalWise {
             default:
                 return a ^ b;
         }
+    }
+
+    public boolean canBlockStay(World worldIn, BlockPos pos)
+    {
+        return worldIn.getBlockState(pos.down()).isTopSolid();
     }
 
     private int getPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face){
@@ -213,5 +228,14 @@ public class BitwiseGate extends HorizontalWise {
     public BlockStateContainer createBlockState(){
         return new BlockStateContainer(this, FACING, OP);
     }
+
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    {
+        return worldIn.getBlockState(pos.down()).isTopSolid() ? super.canPlaceBlockAt(worldIn, pos) : false;
+    }
+
+
+
 
 }
