@@ -111,6 +111,33 @@ public class BitwiseGate extends HorizontalWise {
         return false;
     }
 
+    @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
+    {
+        EnumFacing blockFacing = (EnumFacing)state.getValue(FACING);
+        EnumFacing[] inputFaces = new EnumFacing[2];
+
+        inputFaces[0] = blockFacing.rotateY();
+        inputFaces[1] = inputFaces[0].getOpposite();
+
+        super.onBlockAdded(worldIn, pos, state);
+
+        for(int i = 0; i < 2; i++){
+            BlockPos blockpos = pos.offset(inputFaces[i]);
+            int power = worldIn.getRedstonePower(blockpos, inputFaces[i]);
+
+            if(power >= 15){
+                inputs[i] = 15;
+            }else{
+                IBlockState iblockstate = worldIn.getBlockState(blockpos);
+                inputs[i] = Math.max(power, iblockstate.getBlock() == Blocks.REDSTONE_WIRE ? (iblockstate.getValue(BlockRedstoneWire.POWER)).intValue() : 0);
+            }
+        }
+
+        power =  performOperation(inputs[0], inputs[1], state);
+        worldIn.notifyNeighborsOfStateChange(pos, this, false);
+    }
+
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
         EnumFacing blockFacing = (EnumFacing)state.getValue(FACING);
         EnumFacing[] inputFaces = new EnumFacing[2];
