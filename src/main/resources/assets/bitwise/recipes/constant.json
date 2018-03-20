@@ -1,0 +1,20 @@
+{
+  "result":{
+    "item": "bitwise:redstoneconstant"
+  },
+  "pattern":[
+    " t ",
+    "ttt",
+    "sss"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "t":{
+      "item": "minecraft:redstone_torch"
+    },
+    "s":{
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "result":{
+    "item": "bitwise:bitwisegate"
+  },
+  "pattern":[
+    "rrr",
+    "sss"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "r":{
+      "item":"minecraft:redstone"
+    },
+    "s":{
+      "type": "forge:ore_dict",
+      "ore": "stone"
+    }
+  }
+}
