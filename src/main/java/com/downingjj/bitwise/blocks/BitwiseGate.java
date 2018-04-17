@@ -62,7 +62,7 @@ public class BitwiseGate extends HorizontalWise implements ITileEntityProvider {
         }
     }
     public static final IProperty<EnumOperation> OP = PropertyEnum.create("op", EnumOperation.class);
-    
+
     int[] inputs = new int[2];
 
     public BitwiseGate() {
