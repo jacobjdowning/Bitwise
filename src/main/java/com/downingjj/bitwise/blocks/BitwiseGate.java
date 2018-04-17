@@ -1,17 +1,19 @@
 package com.downingjj.bitwise.blocks;
 
+import com.downingjj.bitwise.tileentity.GateTile;
+import com.downingjj.bitwise.tileentity.RedstonePowerTile;
 import com.downingjj.bitwise.util.Util;
-import com.google.common.util.concurrent.ExecutionError;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
@@ -20,10 +22,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 /**
  * Created by Jacob on 14/03/2018.
  */
-public class BitwiseGate extends HorizontalWise {
+public class BitwiseGate extends HorizontalWise implements ITileEntityProvider {
     private static final String NAME = "bitwisegate";
     protected static final AxisAlignedBB REDSTONE_DIODE_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.125D, 1.0D);
 
@@ -58,13 +62,18 @@ public class BitwiseGate extends HorizontalWise {
         }
     }
     public static final IProperty<EnumOperation> OP = PropertyEnum.create("op", EnumOperation.class);
-
-    private int power;
+    
     int[] inputs = new int[2];
 
     public BitwiseGate() {
         super(NAME, Material.CIRCUITS);
         setDefaultState(super.getDefaultState().withProperty(OP, EnumOperation.AND));
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new GateTile();
     }
 
     @Override
@@ -95,32 +104,12 @@ public class BitwiseGate extends HorizontalWise {
         return true;
     }
 
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                                    EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(player.isSneaking() & player.getHeldItem(hand).isEmpty()){
-            int meta = state.getValue(OP).getMeta();
-            meta += 1;
-            meta = meta < 3 ? meta : 0;
-            IBlockState newState = state.withProperty(OP, EnumOperation.getFromMeta(meta));
-            world.setBlockState(pos, newState);
-
-            power = performOperation(inputs[0], inputs[1], newState);
-            world.notifyNeighborsOfStateChange(pos, this, false);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
-    {
-        EnumFacing blockFacing = (EnumFacing)state.getValue(FACING);
+    private int calculateNewPower(World worldIn, BlockPos pos, IBlockState state){
+        EnumFacing blockFacing = state.getValue(FACING);
         EnumFacing[] inputFaces = new EnumFacing[2];
 
         inputFaces[0] = blockFacing.rotateY();
         inputFaces[1] = inputFaces[0].getOpposite();
-
-        super.onBlockAdded(worldIn, pos, state);
 
         for(int i = 0; i < 2; i++){
             BlockPos blockpos = pos.offset(inputFaces[i]);
@@ -134,39 +123,38 @@ public class BitwiseGate extends HorizontalWise {
             }
         }
 
-        power =  performOperation(inputs[0], inputs[1], state);
+        int newPow = Util.getTEfromPos(worldIn, pos, GateTile.class).performOperation(inputs[0], inputs[1], state.getValue(OP).getMeta());
         worldIn.notifyNeighborsOfStateChange(pos, this, false);
+        return newPow;
+    }
+
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                    EnumFacing side, float hitX, float hitY, float hitZ) {
+        if(player.isSneaking() && player.getHeldItem(hand).isEmpty()){
+            int meta = state.getValue(OP).getMeta();
+            meta += 1;
+            meta = meta < 3 ? meta : 0;
+            IBlockState newState = state.withProperty(OP, EnumOperation.getFromMeta(meta));
+            world.setBlockState(pos, newState);
+
+
+            calculateNewPower(world, pos, newState);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
+    {
+        super.onBlockAdded(worldIn, pos, state);
+
+        calculateNewPower(worldIn, pos, state);
     }
 
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
         if(this.canBlockStay(worldIn, pos)){
-            EnumFacing blockFacing = (EnumFacing) state.getValue(FACING);
-            EnumFacing[] inputFaces = new EnumFacing[2];
-            EnumFacing changedFace = Util.getFacingFromPositions(pos, fromPos);
-
-            inputFaces[0] = blockFacing.rotateY();
-            inputFaces[1] = inputFaces[0].getOpposite();
-
-            if (changedFace.compareTo(inputFaces[0]) == 0 || changedFace.compareTo(inputFaces[1]) == 0) {
-
-                for (int i = 0; i < 2; i++) {
-                    BlockPos blockpos = pos.offset(inputFaces[i]);
-                    int power = worldIn.getRedstonePower(blockpos, inputFaces[i]);
-
-                    if (power >= 15) {
-                        inputs[i] = 15;
-                    } else {
-                        IBlockState iblockstate = worldIn.getBlockState(blockpos);
-                        inputs[i] = Math.max(power, iblockstate.getBlock() == Blocks.REDSTONE_WIRE ? (iblockstate.getValue(BlockRedstoneWire.POWER)).intValue() : 0);
-                    }
-                }
-
-                int newPow = performOperation(inputs[0], inputs[1], state);
-                if (newPow != power) {
-                    power = newPow;
-                    worldIn.notifyNeighborsOfStateChange(pos, this, false);
-                }
-            }
+            calculateNewPower(worldIn, pos, state);
         }else{
             this.dropBlockAsItem(worldIn, pos, state, 0);
             worldIn.setBlockToAir(pos);
@@ -178,19 +166,6 @@ public class BitwiseGate extends HorizontalWise {
         }
     }
 
-    private int performOperation(int a, int b, IBlockState state){
-        EnumOperation op = state.getValue(OP);
-        switch (op){
-            case AND:
-                return a & b;
-            case OR:
-                return a | b;
-            case XOR:
-            default:
-                return a ^ b;
-        }
-    }
-
     public boolean canBlockStay(World worldIn, BlockPos pos)
     {
         return worldIn.getBlockState(pos.down()).isTopSolid();
@@ -198,7 +173,7 @@ public class BitwiseGate extends HorizontalWise {
 
     private int getPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face){
         if(face.compareTo(state.getValue(FACING).getOpposite()) == 0) {
-            return power;
+            return Util.getTEfromPos(world, pos, GateTile.class).getPower();
         }
         return 0;
     }
